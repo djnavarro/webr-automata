@@ -21,14 +21,13 @@
 
         // 1. read the source code as a javascript string
         // 2. evaluate the source code in R to return a function
-        // 3. execute the function and capture the output
-        let donut_src = fetch('donut.R').then((response) => {return response.text()});  
-        let donut_fun = await webR.evalR(await donut_src);        
-        let donut_out = await donut_fun();
+        // 3. call the R function
+        // 4. update document
+        let art_src = fetch('art.R').then((response) => {return response.text()});  
+        let art_fun = await webR.evalR(await art_src);     
+        let art = await art_fun();
+        document.getElementById("output").innerHTML = art.values;
 
-        // send the results to the document
-        console.log(donut_out);
-        document.getElementById("output").innerHTML = donut_out.values;
       });
     </script>
     
