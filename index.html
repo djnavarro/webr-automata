@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Donut Art</title>
+  </head>
+
+  <body>
+
+    <script>
+      // import the webr module and then run the code
+      import('https://webr.r-wasm.org/latest/webr.mjs').then(async ({WebR}) => {
+
+        // wait for the R session to start
+        console.log("initialising R session")
+        const webR = new WebR();
+        await webR.init();
+        console.log("R session has started")
+
+        // 1. read the source code as a javascript string
+        // 2. evaluate the source code in R to return a function
+        // 3. execute the function and capture the output
+        let donut_src = fetch('donut.R').then((response) => {return response.text()});  
+        let donut_fun = await webR.evalR(await donut_src);        
+        let donut_out = await donut_fun();
+
+        // print the results to the console
+        console.log('Result of sourcing donut.R from webR: ', donut_out);
+      });
+    </script>
+    
+    <!-- Plausible -->
+    <!--
+      <script async="" defer="" data-domain="donut.djnavarro.net" src="https://plausible.io/js/plausible.js"></script>
+    -->
+
+  </body>
+</html>
