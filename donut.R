@@ -1,3 +1,3 @@
 function() {
-    "hello"
+    as.character(Sys.time())
 }

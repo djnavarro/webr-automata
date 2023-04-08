@@ -7,6 +7,8 @@
 
   <body>
 
+    <div id="output"></div>
+
     <script>
       // import the webr module and then run the code
       import('https://webr.r-wasm.org/latest/webr.mjs').then(async ({WebR}) => {
@@ -24,8 +26,9 @@
         let donut_fun = await webR.evalR(await donut_src);        
         let donut_out = await donut_fun();
 
-        // print the results to the console
-        console.log('Result of sourcing donut.R from webR: ', donut_out);
+        // send the results to the document
+        console.log(donut_out);
+        document.getElementById("output").innerHTML = donut_out.values;
       });
     </script>
     
