@@ -2,12 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Donut Art</title>
+    <title>Text Textures</title>
   </head>
 
   <body>
 
-    <div id="output"></div>
+    <div id="output">webR is starting, please wait...</div>
+    <button id="reset" style="display: none;">reset</button>
 
     <script>
       // import the webr module and then run the code
@@ -27,6 +28,24 @@
         let art_fun = await webR.evalR(await art_src);     
         let art = await art_fun();
         document.getElementById("output").innerHTML = art.values;
+
+        // reveal the reset button
+        document.getElementById("reset").style = "display: block";
+        document.getElementById("reset").onclick = async function() {
+          let art = await webR.evalR('make_art()');
+          art = await art.toJs();
+          document.getElementById("output").innerHTML = art.values;
+        }
+
+        async function update() {
+          let art_str = document.getElementById("output").innerHTML
+          await webR.objs.globalEnv.bind('str', art_str)
+          let art = await webR.evalR('make_art(str)');
+          art = await art.toJs();
+          document.getElementById("output").innerHTML = art.values;
+        }
+
+        setInterval(update, 500)        
 
       });
     </script>
