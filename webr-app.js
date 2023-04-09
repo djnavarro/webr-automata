@@ -8,24 +8,22 @@ import('https://webr.r-wasm.org/latest/webr.mjs').then(async ({WebR}) => {
     const webr = new WebR();
     await webr.init();
 
-    // read the R source code as a JS string
-    let art_src = fetch('art.R').then((response) => {return response.text()});
+    // read the script as a string, and evaluate it in R
+    let automaton = fetch('automaton.R').then((response) => {return response.text()});
+    await webr.evalR(await automaton);
 
-    // evaluate the R source code, defining make_art() in the R environment
-    await webr.evalR(await art_src);
-
-    // initialise the state of the grid by calling make_art() with no input,
-    // pull the output into JS, and use it to update the state of the grid
-    let art_r = await webr.evalR('make_art()')
-    let art_js = await art_r.toJs();
-    grid.innerHTML = art_js.values;
+    // initialise the grid string by calling automaton() with no input,
+    // pull results into JS, and update the display
+    let str_r = await webr.evalR('automaton()')
+    let str_js = await str_r.toJs();
+    grid.innerHTML = str_js.values;
 
     // function to update the state of the grid
     async function grid_update() {
-        await webr.objs.globalEnv.bind('str', grid.innerHTML) // copy the grid string into R
-        let art_r = await webr.evalR('make_art(str)')         // pass the string to make_art()
-        let art_js = await art_r.toJs();                      // pull the output back to JS
-        grid.innerHTML = art_js.values;                       // update the grid string
+        await webr.objs.globalEnv.bind('str', grid.innerHTML) // copy grid string to R
+        let str_r = await webr.evalR('automaton(str)')        // evaluate R function
+        let str_js = await str_r.toJs();                      // convert result to JS
+        grid.innerHTML = str_js.values;                       // update grid string
     }
 
     // repeatedly call the update function
