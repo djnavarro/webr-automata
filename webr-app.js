@@ -9,21 +9,19 @@ import('https://webr.r-wasm.org/latest/webr.mjs').then(async ({WebR}) => {
     await webr.init();
 
     // read the script as a string, and evaluate it in R
-    let automaton = fetch('automaton.R').then((response) => {return response.text()});
-    await webr.evalR(await automaton);
+    let automaton = await fetch('automaton.R');
+    await webr.evalR(await automaton.text());
 
     // initialise the grid string by calling automaton() with no input,
     // pull results into JS, and update the display
-    let str_r = await webr.evalR('automaton()')
-    let str_js = await str_r.toJs();
-    grid.innerHTML = str_js.values;
+    let str = await webr.evalR('automaton()')
+    grid.innerHTML = (await str.toJs()).values;
 
     // function to update the state of the grid
     async function grid_update() {
         await webr.objs.globalEnv.bind('str', grid.innerHTML) // copy grid string to R
-        let str_r = await webr.evalR('automaton(str)')        // evaluate R function
-        let str_js = await str_r.toJs();                      // convert result to JS
-        grid.innerHTML = str_js.values;                       // update grid string
+        let str = await webr.evalR('automaton(str)')          // evaluate R function
+        grid.innerHTML = (await str.toJs()).values;           // update grid string
     }
 
     // repeatedly call the update function
