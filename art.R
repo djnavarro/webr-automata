@@ -1,10 +1,9 @@
-make_art <- function(str = NULL) {
-
-  # parameters used in the art
-  linebreak <- "<br>"
-  n_rows <- 30
-  n_cols <- 50
-  symbols <- c("░", "▒", "▓", "█")
+make_art <- function(str = NULL,
+                     linebreak = "<br>", 
+                     n_rows = 30,
+                     n_cols = 50,
+                     iterations = 100,
+                     symbols = c("░", "▒", "▓", "█")) {
 
   # create random string if none is given
   if(is.null(str)) {
@@ -13,11 +12,21 @@ make_art <- function(str = NULL) {
   }
 
   # make matrix from (possibly break-delimited) string
-  str <- gsub(pattern = linebreak, replacement = "", x = str, fixed = TRUE)
-  dat <- matrix(strsplit(str, "")[[1]], n_rows, n_cols, byrow = TRUE)
+  str <- gsub(
+    pattern = linebreak, 
+    replacement = "", 
+    x = str, 
+    fixed = TRUE
+  )
+  dat <- matrix(
+    data = strsplit(str, "")[[1]], 
+    nrow = n_rows, 
+    ncol = n_cols, 
+    byrow = TRUE
+  )
 
   # run simple automaton
-  for(i in 1:100) {
+  for(i in 1:iterations) {
     r <- sample(2:(n_rows-1), 1)
     c <- sample(2:(n_cols-1), 1)
     h <- sample(-1:1, 1)
